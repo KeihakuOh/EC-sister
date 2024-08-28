@@ -1,19 +1,37 @@
 //サインアップ画面
 import React, { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import useRequest from '../../hooks/use-request';
 
 const SignUpScreen = ({ handleBack }) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
+  const { doRequest } = useRequest({
+    url: '/login',
+    method: 'post',
+    body: {
+      email,
+      password
+    },
+    onSuccess: () => Router.push('/post')
+  });
+  
   const handleSignUp = (event) => {
     event.preventDefault();
     if (password !== confirmPassword) {
       alert('パスワードが一致しません');
       return;
     }
-    console.log('Password:', password);
+    onSubmit();
   };
+
+  const onSubmit = async event => {
+    event.preventDefault();
+
+    await doRequest();
+  };
+
 
   return (
     <Box
@@ -40,6 +58,15 @@ const SignUpScreen = ({ handleBack }) => {
             Login
           </Typography>
           <form onSubmit={handleSignUp}>
+            <TextField
+              label="email"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
             <TextField
               label="password"
               variant="outlined"
