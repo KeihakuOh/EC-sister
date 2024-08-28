@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import useRequest from '../../hooks/use-request';
+import Router from 'next/router';
 
 const SignUpScreen = ({ handleBack }) => {
   const [email, setEmail] = useState('');
@@ -18,7 +19,6 @@ const SignUpScreen = ({ handleBack }) => {
   });
   
   const handleSignUp = (event) => {
-    event.preventDefault();
     if (password !== confirmPassword) {
       alert('パスワードが一致しません');
       return;
