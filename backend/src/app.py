@@ -4,7 +4,8 @@ from model import db, User, Post, Iterm, AmazonData, RakutenData
 import os
 
 app = Flask(__name__)
-CORS(app)  # クロスオリジンリソースシェアリングの有効化
+# CORSの設定でクレデンシャルを許可
+CORS(app, supports_credentials=True)
 
 # 必要な設定を追加
 app.secret_key = os.urandom(24).hex()  # セッションを使用するために必要なシークレットキー
