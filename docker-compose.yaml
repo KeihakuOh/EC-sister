@@ -1,0 +1,10 @@
+services:
+  backend:
+    build:
+      context: backend
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./backend/src:/app
+    ports:
+      - 5000:5000
