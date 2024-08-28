@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default ({ currentUser }) => {
   const links = [
     !currentUser && { label: 'Sign Up', href: '/auth/signup' },
-    !currentUser && { label: 'Sign In', href: '/auth/login' },
+    !currentUser && { label: 'Login', href: '/auth/login' },
     currentUser && { label: 'Sign Out', href: '/auth/signout' },
   ]
     .filter((linkConfig) => linkConfig)
