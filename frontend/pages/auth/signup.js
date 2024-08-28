@@ -5,14 +5,14 @@ import useRequest from '../../hooks/use-request';
 import Router from 'next/router';
 
 const SignUpScreen = ({ handleBack }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const { doRequest } = useRequest({
-    url: '/signup',
+    url: 'http://localhost:5000/signup',
     method: 'post',
     body: {
-      email,
+      username,
       password
     },
     onSuccess: () => Router.push('/post')
@@ -61,12 +61,12 @@ const SignUpScreen = ({ handleBack }) => {
           </Typography>
           <form onSubmit={handleSignUp}>
             <TextField
-              label="email"
+              label="username"
               variant="outlined"
               fullWidth
               margin="normal"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
             <TextField

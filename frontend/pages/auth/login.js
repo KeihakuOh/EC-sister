@@ -4,26 +4,27 @@ import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import useRequest from '../../hooks/use-request';
 import Router from 'next/router';
 
-const SignUpScreen = ({ handleBack }) => {
-  const [email, setEmail] = useState('');
+const LoginScreen = ({ handleBack }) => {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const { doRequest } = useRequest({
-    url: '/login',
+    url: 'http://localhost:5000/login',
     method: 'post',
     body: {
-      email,
+      username,
       password
     },
     onSuccess: () => Router.push('/post')
   });
   
-  const handleSignUp = (event) => {
+  const handleLogin = (event) => {
+    event.preventDefault();
     if (password !== confirmPassword) {
       alert('パスワードが一致しません');
       return;
     }
-    onSubmit();
+    onSubmit(event);
   };
 
   const onSubmit = async event => {
@@ -57,14 +58,14 @@ const SignUpScreen = ({ handleBack }) => {
           <Typography variant="h4" gutterBottom>
             Login
           </Typography>
-          <form onSubmit={handleSignUp}>
+          <form onSubmit={handleLogin}>
             <TextField
-              label="email"
+              label="username"
               variant="outlined"
               fullWidth
               margin="normal"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
             <TextField
@@ -103,4 +104,4 @@ const SignUpScreen = ({ handleBack }) => {
   );
 };
 
-export default SignUpScreen;
+export default LoginScreen;

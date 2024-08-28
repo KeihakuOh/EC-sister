@@ -8,7 +8,7 @@ CORS(app)  # クロスオリジンリソースシェアリングの有効化
 
 # 必要な設定を追加
 app.secret_key = os.urandom(24).hex()  # セッションを使用するために必要なシークレットキー
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost:5432/yourdatabase'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:postgres@db:5432/hack'  # 修正: localhostをdbに変更
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
