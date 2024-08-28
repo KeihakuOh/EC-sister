@@ -1,4 +1,15 @@
 services:
+  db:
+    image: postgres:13
+    container_name: db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hack
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   backend:
     build:
       context: backend
@@ -8,3 +19,6 @@ services:
       - ./backend/src:/app
     ports:
       - 5000:5000
+
+volumes:
+  postgres_data:
