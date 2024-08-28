@@ -1,4 +1,3 @@
 flask
 flask_cors
-flask_sqlalchem
-models
+flask_sqlalchemy
