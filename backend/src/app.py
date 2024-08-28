@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-from models import db, User, Post, Iterm, AmazonData, RakutenData
+from model import db, User, Post, Iterm, AmazonData, RakutenData
 import os
 
 app = Flask(__name__)
