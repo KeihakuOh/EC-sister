@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import useRequest from '../../hooks/use-request';
+import Router from 'next/router';
 
 const SignUpScreen = ({ handleBack }) => {
   const [email, setEmail] = useState('');
@@ -18,12 +19,14 @@ const SignUpScreen = ({ handleBack }) => {
   });
   
   const handleSignUp = (event) => {
-    event.preventDefault();
+    event.preventDefault(); // フォームのデフォルトの送信を防止
+  
     if (password !== confirmPassword) {
       alert('パスワードが一致しません');
       return;
     }
-    onSubmit();
+    
+    onSubmit(event); // eventオブジェクトを渡してonSubmitを呼び出す
   };
 
   const onSubmit = async event => {
@@ -31,7 +34,6 @@ const SignUpScreen = ({ handleBack }) => {
 
     await doRequest();
   };
-
 
   return (
     <Box
