@@ -5,5 +5,5 @@
   "/auth/signup": "pages/auth/signup.js",
   "/post": "pages/post.js",
   "/": "pages/index.js",
-  "/auth/login": "pages/auth/login.js"
+  "/research": "pages/research.js"
 }

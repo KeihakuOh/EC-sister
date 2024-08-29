@@ -14,9 +14,42 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-# アプリケーションコンテキストを使用してデータベースを初期化
 with app.app_context():
     db.create_all()
+    
+    # デフォルトのユーザーを作成
+    default_user = User.query.filter_by(username='default_user').first()
+    if not default_user:
+        default_user = User(username='default_user', password='password')
+        db.session.add(default_user)
+        db.session.commit()
+
+    # デフォルトのアイテムを作成
+    default_items = []
+    for i in range(7):
+        item_name = f'Item {i+1}'
+        item = Iterm.query.filter_by(name=item_name).first()
+        if not item:
+            item = Iterm(name=item_name)
+            db.session.add(item)
+            db.session.commit()
+        default_items.append(item)
+
+    # デフォルトのPostデータを挿入
+    if not Post.query.first():  # データが既に存在しない場合のみ挿入
+        default_posts = [
+            Post(
+                column=f'Column {i+1}',
+                user_id=default_user.id,
+                item_id=default_items[i % 7].id,  # 7個のアイテムに循環して割り当て
+                content=f'Default content {i+1}',
+                likes_count=10
+            )
+            for i in range(7)  # 7個のPostを作成
+        ]
+        db.session.bulk_save_objects(default_posts)
+        db.session.commit()
+
 
 # /login エンドポイント
 @app.route('/login', methods=['POST'])
@@ -56,13 +89,6 @@ def logout():
     session.pop('user_id', None)
     return jsonify({"message": "Logout successful"}), 200
 
-# /post エンドポイント (GET)
-@app.route('/post', methods=['GET'])
-def get_post():
-    posts = Post.query.all()
-    post_list = [{"id": post.id, "column": post.column, "user_id": post.user_id, "content": post.content, "likes_count": post.likes_count} for post in posts]
-    return jsonify({"message": "Fetched posts", "posts": post_list}), 200
-
 # /post エンドポイント (POST)
 @app.route('/post', methods=['POST'])
 def create_post():
@@ -73,6 +99,15 @@ def create_post():
     db.session.commit()
 
     return jsonify({"message": "Post created", "post": {"id": new_post.id, "column": new_post.column, "user_id": new_post.user_id, "content": new_post.content, "likes_count": new_post.likes_count}}), 201
+
+@app.route('/post', methods=['GET'])
+def get_post():
+    posts = Post.query.all()
+    post_list = [
+        {"id": post.id, "column": post.column, "user_id": post.user_id, "item_id": post.item_id, "content": post.content, "likes_count": post.likes_count}
+        for post in posts
+    ]
+    return jsonify({"message": "Fetched posts", "posts": post_list}), 200
 
 # /result エンドポイント
 @app.route('/result', methods=['POST'])
@@ -90,6 +125,16 @@ def current_user():
             return jsonify({"user": {"id": user.id, "username": user.username}}), 200
     return jsonify({"user": None}), 200
 
+# /like エンドポイント (POST)
+@app.route('/post/<int:post_id>/like', methods=['POST'])
+def like_post(post_id):
+    post = Post.query.get(post_id)
+    if post:
+        post.likes_count += 1
+        db.session.commit()
+        return jsonify({"message": "Like added", "post": {"id": post.id, "likes_count": post.likes_count}}), 200
+    else:
+        return jsonify({"message": "Post not found"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
