@@ -194,6 +194,20 @@ def like_post(post_id):
         return jsonify({"message": "Like added", "post": {"id": post.id, "likes_count": post.likes_count}}), 200
     else:
         return jsonify({"message": "Post not found"}), 404
+    
+@app.route('/profile', methods=['GET'])
+def get_user_posts():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"message": "User not authenticated"}), 401
+
+    user_posts = Post.query.filter_by(user_id=user_id).all()
+    post_list = [
+        {"id": post.id, "column": post.column, "user_id": post.user_id, "content": post.content, "likes_count": post.likes_count}
+        for post in user_posts
+    ]
+    return jsonify({"message": "Fetched user posts", "posts": post_list}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
