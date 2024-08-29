@@ -50,6 +50,26 @@ with app.app_context():
         db.session.bulk_save_objects(default_posts)
         db.session.commit()
 
+    # AmazonData テーブルに初期データを挿入
+    if not AmazonData.query.first():  # データが既に存在しない場合のみ挿入
+        amazon_data_entries = [
+            AmazonData(iterm_id=1, price=100.0, other_conditions="New arrival"),
+            AmazonData(iterm_id=2, price=150.0, other_conditions="Discounted"),
+            AmazonData(iterm_id=4, price=200.0, other_conditions="Limited stock"),
+        ]
+        db.session.bulk_save_objects(amazon_data_entries)
+        db.session.commit()
+
+    # RakutenData テーブルに初期データを挿入
+    if not RakutenData.query.first():  # データが既に存在しない場合のみ挿入
+        rakuten_data_entries = [
+            RakutenData(iterm_id=1, price=95.0, other_conditions="Special offer"),
+            RakutenData(iterm_id=2, price=140.0, other_conditions="Free shipping"),
+            RakutenData(iterm_id=3, price=180.0, other_conditions="Hot deal"),
+        ]
+        db.session.bulk_save_objects(rakuten_data_entries)
+        db.session.commit()
+
 
 # /login エンドポイント
 @app.route('/login', methods=['POST'])
@@ -121,13 +141,39 @@ def get_post():
     
     return jsonify({"message": "Fetched posts", "posts": post_list}), 200
 
-
-# /result エンドポイント
 @app.route('/result', methods=['POST'])
 def result():
     data = request.json
-    # 処理のロジックをここに追加
-    return jsonify({"message": "Result received", "data": data}), 200
+    item_name = data.get('item_name')
+    amazon_checked = data.get('amazon', False)
+    rakuten_checked = data.get('rakuten', False)
+    
+    # Retrieve the item ID using the item name
+    item = Iterm.query.filter_by(name=item_name).first()
+    if not item:
+        return jsonify({"message": "Item not found"}), 404
+
+    # Initialize the response data
+    result_data = {
+        "amazon_data": [],
+        "rakuten_data": []
+    }
+
+    # Query AmazonData if amazon is checked
+    if amazon_checked:
+        amazon_data = AmazonData.query.filter_by(iterm_id=item.id).all()
+        result_data["amazon_data"] = [
+            {"id": data.id, "price": data.price, "other_conditions": data.other_conditions} for data in amazon_data
+        ]
+
+    # Query RakutenData if rakuten is checked
+    if rakuten_checked:
+        rakuten_data = RakutenData.query.filter_by(iterm_id=item.id).all()
+        result_data["rakuten_data"] = [
+            {"id": data.id, "price": data.price, "other_conditions": data.other_conditions} for data in rakuten_data
+        ]
+
+    return jsonify({"message": "Result received", "data": result_data}), 200
 
 @app.route('/currentuser', methods=['GET'])
 def current_user():
