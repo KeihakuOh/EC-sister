@@ -102,12 +102,25 @@ def create_post():
 
 @app.route('/post', methods=['GET'])
 def get_post():
-    posts = Post.query.all()
+    # Query to fetch posts along with the associated username
+    posts = db.session.query(Post, User.username).join(User, Post.user_id == User.id).all()
+    
+    # Create a list of posts with username included
     post_list = [
-        {"id": post.id, "column": post.column, "user_id": post.user_id, "item_id": post.item_id, "content": post.content, "likes_count": post.likes_count}
-        for post in posts
+        {
+            "id": post.id,
+            "column": post.column,
+            "user_id": post.user_id,
+            "item_id": post.item_id,
+            "content": post.content,
+            "likes_count": post.likes_count,
+            "username": username  # Add username to the response
+        }
+        for post, username in posts
     ]
+    
     return jsonify({"message": "Fetched posts", "posts": post_list}), 200
+
 
 # /result エンドポイント
 @app.route('/result', methods=['POST'])
