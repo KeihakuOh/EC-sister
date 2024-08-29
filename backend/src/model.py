@@ -20,9 +20,13 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     column = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('iterms.id'), nullable=False)  # item_idカラムを追加
     content = db.Column(db.Text, nullable=False)
     likes_count = db.Column(db.Integer, default=0)
-    
+
+    # リレーションシップ（Postが1つのItemに関連付けられる）
+    item = db.relationship('Iterm', backref='posts', lazy=True)
+
 # Itermテーブルのモデル
 class Iterm(db.Model):
     __tablename__ = 'iterms'
