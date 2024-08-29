@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Grid, Typography, Button } from '@mui/material';
+import { Box, Container, Grid, Typography, Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
@@ -61,11 +61,29 @@ const PostPage = () => {
     setShowAllPosts(!showAllPosts); // 状態を切り替え
   };
 
+  const handleRelatedItemSearch = () => {
+    console.log(`Searching for related items: ${relatedItem}`);
+    // ここに関連記事商品の検索処理を追加
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 4, bgcolor: 'lightblue', py: 2, borderRadius: 2 }}>
       <Button variant="contained" color="primary" onClick={handleTogglePosts} sx={{ mb: 2 }}>
         {showAllPosts ? '自分の記事を確認する' : '全部の記事を見る'}
       </Button>
+
+      {showAllPosts && (
+        <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+          <TextField
+            label="関連記事商品を入力"
+            variant="outlined"
+            sx={{ mr: 2, flexGrow: 1 }}
+          />
+          <Button variant="contained" color="primary" onClick={handleRelatedItemSearch}>
+            検索
+          </Button>
+        </Box>
+      )}
 
       {/* posts が空でない場合のみ画像と投稿を表示 */}
       {posts.length > 0 ? (
