@@ -84,7 +84,6 @@ def result():
 @app.route('/currentuser', methods=['GET'])
 def current_user():
     user_id = session.get('user_id')
-    print(user_id)
     if user_id:
         user = User.query.get(user_id)
         if user:
