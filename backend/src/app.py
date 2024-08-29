@@ -81,5 +81,17 @@ def result():
     # 処理のロジックをここに追加
     return jsonify({"message": "Result received", "data": data}), 200
 
+@app.route('/currentuser', methods=['GET'])
+def current_user():
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        if user:
+            return jsonify({"user": {"id": user.id, "username": user.username}}), 200
+    return jsonify({"user": None}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
+
+
