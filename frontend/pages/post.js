@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Container, Grid, Typography, Button } from '@mui/material';
 import axios from 'axios';
-import { useRouter } from 'next/router'; // Import the useRouter hook
+import { useRouter } from 'next/router';
 
 const PostPage = () => {
-  // ポストデータと画像パスを保存するためのステート
   const [posts, setPosts] = useState([]);
-  const [showBuyButton, setShowBuyButton] = useState({}); // Track which posts should show the "Go to buy it" button
-  const router = useRouter(); // Initialize the router
+  const [showBuyButton, setShowBuyButton] = useState({});
+  const router = useRouter();
 
   const imagePaths = [
     '/images/image2.jpg',
@@ -19,7 +18,6 @@ const PostPage = () => {
     '/images/image8.jpg',
   ];
 
-  // サーバーからポストデータを取得する
   useEffect(() => {
     axios.get('http://localhost:5000/post', { withCredentials: true })
       .then(response => {
@@ -30,15 +28,12 @@ const PostPage = () => {
       });
   }, []);
 
-  // いいねボタンのクリック処理
   const handleLike = (postId) => {
     axios.post(`http://localhost:5000/post/${postId}/like`, {}, { withCredentials: true })
       .then(response => {
-        // いいねが成功したらポストデータを更新
         setPosts(prevPosts => prevPosts.map(post => 
           post.id === postId ? { ...post, likes_count: post.likes_count + 1 } : post
         ));
-        // Show the "Go to buy it" button for the liked post
         setShowBuyButton(prevState => ({ ...prevState, [postId]: true }));
       })
       .catch(error => {
@@ -46,9 +41,8 @@ const PostPage = () => {
       });
   };
 
-  // "Go to buy it"ボタンのクリック処理
   const handleGoToBuy = () => {
-    router.push('/research'); // Navigate to the /research page
+    router.push('/research');
   };
 
   return (
@@ -62,6 +56,7 @@ const PostPage = () => {
             {posts[index] ? (
               <Box>
                 <Typography variant="h6">{posts[index].content}</Typography>
+                <Typography variant="body2">Posted by: {posts[index].username}</Typography>
                 <Typography variant="body2">Likes: {posts[index].likes_count}</Typography>
                 <Button
                   variant="contained"
@@ -71,7 +66,7 @@ const PostPage = () => {
                 >
                   Like
                 </Button>
-                {showBuyButton[posts[index].id] && ( // Show "Go to buy it" button if post is liked
+                {showBuyButton[posts[index].id] && (
                   <Button
                     variant="contained"
                     color="secondary"
