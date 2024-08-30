@@ -85,6 +85,12 @@ const PostPage = () => {
         </Box>
       )}
 
+      {!showAllPosts && posts.length > 0 && (
+        <Typography variant="h4" sx={{ mb: 2, color: 'green', fontWeight: 'bold' }}>
+          もらえる金額：9999999円
+        </Typography>
+      )}
+
       {/* posts が空でない場合のみ画像と投稿を表示 */}
       {posts.length > 0 ? (
         imagePaths.map((src, index) => (
